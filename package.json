@@ -1,0 +1,36 @@
+{
+    "name": "web-template",
+    "version": "0.0.1b",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/..."
+    },
+    "devDependencies": {
+        "bower": "*",
+        "browser-sync": "*",
+        "imagemin-pngquant": "*",
+        "autoprefixer": "*",
+        "gulp": "*",
+        "gulp-minify-html": "*",
+        "gulp-postcss": "*",
+        "gulp-sourcemaps": "*",
+        "gulp-uglify": "*",
+        "gulp-imagemin": "*",
+        "gulp-tinypng": "*",
+        "gulp-concat": "*",
+        "gulp-minify-css": "*",
+        "gulp-rename": "*"
+    },
+    "description": "Helpful tools for everyday.",
+    "homepage": "http://xmalinov.github.io/",
+    "keywords": [
+        "js",
+        "css",
+        "html",
+        "gulp"
+    ],
+    "authors": [
+        "Alexander Malinov <xmalinov@gmail.com>"
+    ],
+    "license": ""
+}
