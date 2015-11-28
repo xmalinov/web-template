@@ -8,11 +8,19 @@
 //TODO add converting images to base64
 
 var gulp = require('gulp');
-
 var browserSync = require('browser-sync');
+var del = require('del');
+
+var paths = {
+    scripts: ['./src/js/**/*.js'],
+    styles: ['./src/css/**/*.css'],
+    html: ['./src/*.html'],
+    images: ['./src/img/**/*.*'],
+    extras: ['./src/crossdomain.xml', './src/humans.txt', './src/robots.txt', './src/favicon.ico']
+};
 
 // static server
-gulp.task('serve', function() {
+gulp.task('serve', function () {
     browserSync({
         logLevel: 'silent',
         port: 9000,
@@ -23,28 +31,26 @@ gulp.task('serve', function() {
 });
 
 // changes of static files
-gulp.task('watch', function() {
+gulp.task('watch', function () {
     gulp.watch([
-        './src/*.html',
-        './src/js/**/*.js',
-        './src/css/**/*.css',
-        './src/img/**/*.*'
+        paths.html,
+        paths.scripts,
+        paths.styles,
+        paths.images
     ]).on('change', browserSync.reload);
 });
 
 // changes of static css files for prefixes
-gulp.task('watchcss', function() {
-    gulp.watch([
-        './src/css/**/*.css'
-    ], ['autoprefix']);
+gulp.task('watchcss', function () {
+    gulp.watch([paths.styles], ['autoprefix']);
 });
 
 // autoprefixer
-gulp.task('autoprefix', function() {
+gulp.task('autoprefix', function () {
     var autoprefixer = require('gulp-autoprefixer');
     var browsersArr = ['last 1 version', '> 1%', 'ie > 8'];
 
-    return gulp.src('./src/css/**/*.css')
+    return gulp.src(paths.styles)
         .pipe(autoprefixer({
             browsers: browsersArr,
             cascade: false
@@ -54,22 +60,22 @@ gulp.task('autoprefix', function() {
 
 // compress images using tinypng.com
 //TODO create api-key changing
-gulp.task('tinypng', function() {
+gulp.task('tinypng', function () {
     var tinypng = require('gulp-tinypng');
-    return gulp.src('./src/img/*')
+    return gulp.src(paths.images)
         .pipe(tinypng('wglUzGPbSzt-a-DMRCwd5mztAaKJJwB9'))
         .pipe(gulp.dest('dist'));
 });
 
 // pack js and css in html files, minify all html/js/css
-gulp.task('minifyall', function() {
+gulp.task('minifyall', function () {
     var useref = require('gulp-useref');
     var uglify = require('gulp-uglify');
     var minifyCss = require('gulp-minify-css');
     var minifyHtml = require('gulp-minify-html');
     var gulpIf = require('gulp-if');
 
-    return gulp.src('src/*.html')
+    return gulp.src(paths.html)
         .pipe(useref())
         .pipe(gulpIf('*.html', minifyHtml()))
         .pipe(gulpIf('*.js', uglify()))
@@ -78,13 +84,11 @@ gulp.task('minifyall', function() {
 });
 
 // clean dist directory
-gulp.task('clean', function() {
-    var del = require('del');
+gulp.task('clean', function () {
     del('dist');
-})
+});
 
-gulp.task('clean-one', function() {
-    var del = require('del');
+gulp.task('clean-one', function () {
     del('dist/css');
     del('dist/js');
     del('dist/scripts');
@@ -94,23 +98,21 @@ gulp.task('clean-one', function() {
     return gulp.src('dist/*.html')
         .pipe(minifyHtml())
         .pipe(gulp.dest('dist'));
-})
+});
 
-gulp.task('useref', function() {
+gulp.task('useref', function () {
     var useref = require('gulp-useref');
 
     var options = {
         compress: false
     };
 
-    return gulp.src('src/*.html')
+    return gulp.src(paths.html)
         .pipe(useref())
         .pipe(gulp.dest('dist'));
-})
+});
 
-gulp.task('onefile', ['useref'], function() {
-    var del = require('del');
-
+gulp.task('onefile', ['useref'], function () {
     var inlinesource = require('gulp-inline-source');
 
     var options = {
@@ -120,10 +122,10 @@ gulp.task('onefile', ['useref'], function() {
     return gulp.src('./dist/*.html')
         .pipe(inlinesource(options))
         .pipe(gulp.dest('./dist'));
-})
+});
 
 // compress images
-gulp.task('imagemin', function() {
+gulp.task('imagemin', function () {
     var imagemin = require('gulp-imagemin');
     var pngquant = require('imagemin-pngquant');
 
@@ -138,9 +140,8 @@ gulp.task('imagemin', function() {
 });
 
 gulp.task('default', ['serve', 'watch', 'watchcss']);
-gulp.task('production-one', ['clean', 'onefile', 'imagemin']);
-gulp.task('production-min', ['clean', 'minifyall', 'imagemin']);
-//or 'tinypng' for image compressing
+gulp.task('production-one', ['clean', 'onefile', 'clean-one', 'tinypng']); //use with "inline" parameter in index.html
+gulp.task('production-min', ['clean', 'minifyall', 'imagemin']); //or 'tinypng' for image compressing
 
 // var paths = {
 //  scripts: ['app/scripts/**/*.js'],
@@ -152,12 +153,3 @@ gulp.task('production-min', ['clean', 'minifyall', 'imagemin']);
 //  gulp.src(paths.scripts.concat(paths.html))
 //  .pipe(gulp.dest(paths.dist));
 // });
-
-// var paths = {
-//  scripts: ['scripts/**/*.js', '!scripts/libs/**/*.js'],
-//  libs: ['scripts/libs/jquery/dist/jquery.js', 'scripts/libs/underscore/underscore.js', 'scripts/backbone/backbone.js'],
-//  styles: ['styles/**/*.css'],
-//  html: ['index.html', '404.html'],
-//  images: ['images/**/*.png'],
-//  extras: ['crossdomain.xml', 'humans.txt', 'manifest.appcache', 'robots.txt', 'favicon.ico'],
-// };
