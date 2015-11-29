@@ -9,6 +9,7 @@ And gulpfile.js with for "every-day" tasks.
 
 ### Common
 - Live-reload by [Browser-sync](http://www.browsersync.io/) on source files save
+- Live LESS processing
 - Autoprefixes for legacy browsers
 - Minifing html, js, css
 - Image compression (using imagemin or tinypng)

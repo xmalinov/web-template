@@ -10,6 +10,7 @@
 var gulp = require('gulp');
 var browserSync = require('browser-sync');
 var del = require('del');
+var concat = require('gulp-concat');
 
 var paths = {
     scripts: ['./src/js/**/*.js'],
@@ -48,7 +49,7 @@ gulp.task('watchcss', function () {
 // autoprefixer
 gulp.task('autoprefix', function () {
     var autoprefixer = require('gulp-autoprefixer');
-    var browsersArr = ['last 1 version', '> 1%', 'ie > 8'];
+    var browsersArr = ['last 2 version', '> 1%', 'ie > 8'];
 
     return gulp.src(paths.styles)
         .pipe(autoprefixer({
@@ -108,8 +109,7 @@ gulp.task('useref', function () {
     };
 
     return gulp.src(paths.html)
-        .pipe(useref())
-        .pipe(gulp.dest('dist'));
+        .pipe(useref()).pipe(gulp.dest('dist'));
 });
 
 gulp.task('onefile', ['useref'], function () {
@@ -139,7 +139,21 @@ gulp.task('imagemin', function () {
         .pipe(gulp.dest('dist'));
 });
 
-gulp.task('default', ['serve', 'watch', 'watchcss']);
+// less watch and compile
+gulp.task('less', function () {
+    var less = require('gulp-less');
+    gulp.src('./src/css/less/**/*.less')
+        .pipe(less())
+        .pipe(concat('main-less.css'))
+        .pipe(gulp.dest('./src/css'));
+});
+
+// changes of in less files
+gulp.task('watchless', function () {
+    gulp.watch(['./src/css/less/**/*.less'], ['less']);
+});
+
+gulp.task('default', ['serve', 'watch', 'watchcss', 'watchless']);
 gulp.task('production-one', ['clean', 'onefile', 'clean-one', 'tinypng']); //use with "inline" parameter in index.html
 gulp.task('production-min', ['clean', 'minifyall', 'imagemin']); //or 'tinypng' for image compressing
 
