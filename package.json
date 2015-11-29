@@ -1,9 +1,9 @@
 {
     "name": "web-template",
-    "version": "0.0.1b",
+    "version": "0.0.1",
     "repository": {
         "type": "git",
-        "url": "git://github.com/..."
+        "url": "https://github.com/xmalinov/web-template"
     },
     "devDependencies": {
         "bower": "*",
@@ -32,5 +32,5 @@
     "authors": [
         "Alexander Malinov <xmalinov@gmail.com>"
     ],
-    "license": ""
+    "license": "MIT"
 }
